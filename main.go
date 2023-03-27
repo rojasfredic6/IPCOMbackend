@@ -12,7 +12,7 @@ func main() {
 	e := echo.New()
 
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+		return c.String(http.StatusOK, "Wellcome to Fredic Rojas' backend test")
 	})
 
 	e.GET("/resume/2019-12-01", func(c echo.Context) error {
