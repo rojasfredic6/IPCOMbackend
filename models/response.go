@@ -2,6 +2,8 @@ package models
 
 import (
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -21,7 +23,34 @@ func NewSalesResponse() *SalesResponse {
 
 func (s *SalesResponse) GenerateResponse(days string) *SalesResponse {
 
-	data, err := GetData(days)
+	dateFormat := "2019-12-01"
+	intDays, err := strconv.Atoi(days)
+
+	if err != nil {
+		echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	listDates := []string{}
+
+	if intDays == 0 {
+		listDates = append(listDates, "2019-12-01")
+	} else {
+		date, err := time.Parse("2006-01-02", dateFormat)
+		if err != nil {
+			echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+
+		for i := 0; i < intDays; i++ {
+			if i == 0 {
+				date = date.AddDate(0, 0, i)
+			} else {
+				date = date.AddDate(0, 0, 1)
+			}
+			listDates = append(listDates, date.Format("2006-01-02"))
+		}
+	}
+
+	data, err := GetData(listDates)
 
 	if err != nil {
 		echo.NewHTTPError(http.StatusBadRequest, err.Error())
